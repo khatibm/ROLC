@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Ramadan Q&A</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app" role="main" aria-live="polite">
+
+    <!-- ============ START SCREEN ============ -->
+    <section id="screen-start" class="screen active" role="region" aria-label="Start Screen">
+      <header class="top-bar">
+        <button id="btn-close" class="btn-icon" aria-label="Close game" type="button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="top-bar-actions">
+          <button id="btn-sound-start" class="btn-icon" aria-label="Toggle sound" type="button">
+            <span class="sound-icon" data-on="🔊" data-off="🔇"></span>
+          </button>
+          <button id="btn-dark-start" class="btn-icon" aria-label="Toggle dark mode" type="button">
+            <span class="dark-icon" data-on="☀️" data-off="🌙"></span>
+          </button>
+        </div>
+      </header>
+
+      <div class="start-content">
+        <div class="logo-area" aria-hidden="true">
+          <div class="crescent-star">
+            <div class="crescent"></div>
+            <div class="star"></div>
+          </div>
+        </div>
+        <h1 id="start-title" class="app-title">Ramadan Q&A</h1>
+        <p id="start-subtitle" class="app-subtitle">Test your knowledge</p>
+
+        <form id="setup-form" autocomplete="off" novalidate>
+          <div class="form-group">
+            <label id="label-name" for="input-name">Your Name</label>
+            <input
+              id="input-name"
+              type="text"
+              minlength="3"
+              maxlength="16"
+              required
+              autocomplete="off"
+              spellcheck="false"
+              aria-describedby="name-error"
+            >
+            <span id="name-error" class="field-error" role="alert"></span>
+          </div>
+
+          <div class="form-group">
+            <label id="label-lang">Language</label>
+            <div class="toggle-group" role="radiogroup" aria-labelledby="label-lang">
+              <button type="button" class="toggle-btn active" data-lang="en" role="radio" aria-checked="true">English</button>
+              <button type="button" class="toggle-btn" data-lang="ar" role="radio" aria-checked="false">العربية</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label id="label-difficulty">Difficulty</label>
+            <div class="toggle-group" role="radiogroup" aria-labelledby="label-difficulty">
+              <button type="button" class="toggle-btn" data-diff="easy" role="radio" aria-checked="false" id="diff-easy">Easy</button>
+              <button type="button" class="toggle-btn active" data-diff="mixed" role="radio" aria-checked="true" id="diff-mixed">Mixed</button>
+              <button type="button" class="toggle-btn" data-diff="medium" role="radio" aria-checked="false" id="diff-medium">Medium</button>
+              <button type="button" class="toggle-btn" data-diff="hard" role="radio" aria-checked="false" id="diff-hard">Hard</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label id="label-timer">Timer Mode</label>
+            <div class="toggle-group" role="radiogroup" aria-labelledby="label-timer">
+              <button type="button" class="toggle-btn active" data-timer="total" role="radio" aria-checked="true" id="timer-total">Total Timer</button>
+              <button type="button" class="toggle-btn" data-timer="perQuestion" role="radio" aria-checked="false" id="timer-per">Per Question</button>
+            </div>
+          </div>
+
+          <button id="btn-start" type="submit" class="btn-primary">Start Quiz</button>
+        </form>
+
+        <button id="btn-leaderboard-start" type="button" class="btn-secondary">View Leaderboard</button>
+      </div>
+    </section>
+
+    <!-- ============ QUIZ SCREEN ============ -->
+    <section id="screen-quiz" class="screen" role="region" aria-label="Quiz">
+      <header class="quiz-header">
+        <div class="quiz-header-top">
+          <button id="btn-close-quiz" class="btn-icon" aria-label="Close game" type="button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <span id="quiz-counter" class="quiz-counter">1/10</span>
+          <div class="quiz-header-actions">
+            <button id="btn-lang-quiz" class="btn-icon btn-lang-toggle" aria-label="Toggle language" type="button">EN</button>
+            <button id="btn-sound-quiz" class="btn-icon" aria-label="Toggle sound" type="button">
+              <span class="sound-icon" data-on="🔊" data-off="🔇"></span>
+            </button>
+          </div>
+        </div>
+        <div class="timer-bar-wrap">
+          <div id="timer-bar" class="timer-bar"></div>
+        </div>
+        <div class="quiz-meta">
+          <span id="quiz-category" class="badge badge-category"></span>
+          <span id="quiz-difficulty" class="badge badge-difficulty"></span>
+          <span id="quiz-timer-text" class="timer-text">00:00</span>
+        </div>
+      </header>
+
+      <div class="quiz-body">
+        <h2 id="quiz-question" class="question-text"></h2>
+        <div id="quiz-options" class="options-list" role="group" aria-label="Answer options"></div>
+
+        <div id="feedback-panel" class="feedback-panel" hidden>
+          <div id="feedback-icon" class="feedback-icon" aria-hidden="true"></div>
+          <p id="feedback-text" class="feedback-text"></p>
+          <p id="feedback-explanation" class="feedback-explanation"></p>
+          <button id="btn-next" type="button" class="btn-primary btn-next">Next</button>
+        </div>
+      </div>
+
+      <div class="progress-dots" id="progress-dots" aria-label="Question progress"></div>
+    </section>
+
+    <!-- ============ RESULTS SCREEN ============ -->
+    <section id="screen-results" class="screen" role="region" aria-label="Results">
+      <header class="top-bar">
+        <button id="btn-close-results" class="btn-icon" aria-label="Close game" type="button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="top-bar-actions">
+          <button id="btn-lang-results" class="btn-icon btn-lang-toggle" aria-label="Toggle language" type="button">EN</button>
+        </div>
+      </header>
+
+      <div class="results-content">
+        <div class="results-summary">
+          <div class="crescent-star small" aria-hidden="true">
+            <div class="crescent"></div>
+            <div class="star"></div>
+          </div>
+          <h2 id="results-title" class="results-title">Quiz Complete!</h2>
+          <div class="results-stats">
+            <div class="stat-card">
+              <span id="stat-correct" class="stat-value">0/10</span>
+              <span id="stat-correct-label" class="stat-label">Correct</span>
+            </div>
+            <div class="stat-card">
+              <span id="stat-time" class="stat-value">00:00</span>
+              <span id="stat-time-label" class="stat-label">Time</span>
+            </div>
+            <div class="stat-card">
+              <span id="stat-accuracy" class="stat-value">0%</span>
+              <span id="stat-accuracy-label" class="stat-label">Accuracy</span>
+            </div>
+          </div>
+          <p id="results-rank" class="results-rank"></p>
+        </div>
+
+        <div class="results-actions">
+          <button id="btn-play-again" type="button" class="btn-primary">Play Again</button>
+          <button id="btn-leaderboard-results" type="button" class="btn-secondary">View Leaderboard</button>
+        </div>
+
+        <div class="review-section">
+          <h3 id="review-title" class="review-heading">Review Answers</h3>
+          <div id="review-list" class="review-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LEADERBOARD SCREEN ============ -->
+    <section id="screen-leaderboard" class="screen" role="region" aria-label="Leaderboard">
+      <header class="top-bar">
+        <button id="btn-back-lb" class="btn-icon" aria-label="Go back" type="button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <h2 id="lb-title" class="screen-title">Leaderboard</h2>
+        <div class="top-bar-actions">
+          <button id="btn-lang-lb" class="btn-icon btn-lang-toggle" aria-label="Toggle language" type="button">EN</button>
+        </div>
+      </header>
+
+      <div class="lb-content">
+        <div class="lb-filters">
+          <div class="filter-group">
+            <label id="lb-filter-diff-label" class="filter-label">Difficulty</label>
+            <select id="lb-filter-diff" aria-labelledby="lb-filter-diff-label">
+              <option value="all">All</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+              <option value="mixed">Mixed</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label id="lb-filter-timer-label" class="filter-label">Timer</label>
+            <select id="lb-filter-timer" aria-labelledby="lb-filter-timer-label">
+              <option value="all">All</option>
+              <option value="total">Total</option>
+              <option value="perQuestion">Per Q</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="lb-list" class="lb-list"></div>
+
+        <button id="btn-reset-lb" type="button" class="btn-danger">Reset Leaderboard</button>
+      </div>
+
+      <!-- Reset Confirmation Modal -->
+      <div id="modal-reset" class="modal-overlay" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-reset-title">
+          <h3 id="modal-reset-title">Reset Leaderboard?</h3>
+          <p id="modal-reset-body">This will delete all saved scores. This action cannot be undone.</p>
+          <div class="modal-actions">
+            <button id="btn-modal-cancel" type="button" class="btn-secondary">Cancel</button>
+            <button id="btn-modal-confirm" type="button" class="btn-danger">Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
