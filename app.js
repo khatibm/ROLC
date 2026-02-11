@@ -64,7 +64,10 @@
     category_general: { ar: 'معلومات عامة', en: 'General' },
     category_charity: { ar: 'الزكاة والصدقة', en: 'Charity' },
     category_prayer: { ar: 'الصلاة', en: 'Prayer' },
-    category_etiquette: { ar: 'آداب', en: 'Etiquette' }
+    category_etiquette: { ar: 'آداب', en: 'Etiquette' },
+    hint: { ar: 'تلميح', en: 'Hint' },
+    showHint: { ar: 'إظهار التلميح', en: 'Show Hint' },
+    hideHint: { ar: 'إخفاء التلميح', en: 'Hide Hint' }
   };
 
   /* ---------- Questions Bank (60+) ---------- */
@@ -193,6 +196,21 @@
     var entry = I18N[key];
     if (!entry) return key;
     return entry[state.lang] || entry.en || key;
+  }
+
+  function getHintText(q) {
+    if (!q || !q.explanation) return '';
+    var l = state.lang;
+    var full = q.explanation[l] || q.explanation.en || '';
+    if (!full) return '';
+    // Split on common sentence terminators for Arabic & English
+    var parts = full.split(/[.!؟?]/);
+    var first = parts[0] ? parts[0].trim() : full.trim();
+    if (!first) return full.trim();
+    if (first.length < full.trim().length) {
+      return first + '...';
+    }
+    return first;
   }
 
   function $(sel) { return document.querySelector(sel); }
@@ -416,6 +434,10 @@
     $('#btn-leaderboard-results').textContent = t('viewLeaderboard');
     $('#review-title').textContent = t('reviewAnswers');
 
+    // Hint
+    var hintBtn = $('#btn-hint');
+    if (hintBtn) hintBtn.textContent = t('showHint');
+
     // Leaderboard
     $('#lb-title').textContent = t('leaderboard');
     $('#lb-filter-diff-label').textContent = t('filterDifficulty');
@@ -596,6 +618,15 @@
 
     // Hide feedback
     $('#feedback-panel').hidden = true;
+
+    // Reset hint
+    var hintEl = $('#hint-text');
+    var hintBtnEl = $('#btn-hint');
+    if (hintEl && hintBtnEl) {
+      hintEl.textContent = '';
+      hintEl.hidden = true;
+      hintBtnEl.textContent = t('showHint');
+    }
 
     // Timer bar
     if (state.timerMode === 'total') {
