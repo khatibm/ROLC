@@ -1162,6 +1162,29 @@
       showScreen('start');
     });
 
+    // Hint toggle
+    var hintBtn = $('#btn-hint');
+    if (hintBtn) {
+      hintBtn.addEventListener('click', function () {
+        if (!state.questions.length) return;
+        var q = state.questions[state.currentIndex];
+        var hintEl = $('#hint-text');
+        if (!hintEl) return;
+        var isVisible = !hintEl.hidden && hintEl.textContent;
+        if (!isVisible) {
+          var hint = getHintText(q);
+          if (!hint) return;
+          hintEl.textContent = t('hint') + ': ' + hint;
+          hintEl.hidden = false;
+          hintBtn.textContent = t('hideHint');
+        } else {
+          hintEl.textContent = '';
+          hintEl.hidden = true;
+          hintBtn.textContent = t('showHint');
+        }
+      });
+    }
+
     // History popstate (anti-cheat)
     window.addEventListener('popstate', onPopState);
 
