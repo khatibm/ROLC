@@ -1,0 +1,191 @@
+// Tamim Diwan — Database Schema
+// PostgreSQL via Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Tribe Branches ───────────────────────────────────────────────
+model Branch {
+  id             String   @id @default(uuid())
+  nameAr         String   @map("name_ar")
+  parentBranchId String?  @map("parent_branch_id")
+
+  parent   Branch?  @relation("BranchHierarchy", fields: [parentBranchId], references: [id])
+  children Branch[] @relation("BranchHierarchy")
+  persons  Person[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("branches")
+}
+
+// ─── Persons ──────────────────────────────────────────────────────
+model Person {
+  id         String    @id @default(uuid())
+  fullNameAr String    @map("full_name_ar")
+  gender     Gender
+  birthDate  DateTime? @map("birth_date")
+  deathDate  DateTime? @map("death_date")
+  branchId   String?   @map("branch_id")
+  city       String?
+  bio        String?
+  photoUrl   String?   @map("photo_url")
+  isPublic   Boolean   @default(true) @map("is_public")
+
+  branch Branch? @relation(fields: [branchId], references: [id])
+
+  // Relationships where this person is the primary
+  relationships        Relationship[] @relation("PersonRelationships")
+  // Relationships where this person is the related
+  relatedRelationships Relationship[] @relation("RelatedPersonRelationships")
+
+  // Closure table entries
+  ancestorPaths    PersonTreePath[] @relation("AncestorPaths")
+  descendantPaths  PersonTreePath[] @relation("DescendantPaths")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("persons")
+}
+
+enum Gender {
+  M
+  F
+}
+
+// ─── Relationships (Adjacency List) ──────────────────────────────
+model Relationship {
+  id              String           @id @default(uuid())
+  personId        String           @map("person_id")
+  relatedPersonId String           @map("related_person_id")
+  relationType    RelationType     @map("relation_type")
+  status          RelationStatus   @default(CONFIRMED)
+  source          RelationSource   @default(ADMIN)
+
+  person        Person @relation("PersonRelationships", fields: [personId], references: [id], onDelete: Cascade)
+  relatedPerson Person @relation("RelatedPersonRelationships", fields: [relatedPersonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([personId, relatedPersonId, relationType])
+  @@map("relationships")
+}
+
+enum RelationType {
+  FATHER
+  MOTHER
+  SPOUSE
+}
+
+enum RelationStatus {
+  CONFIRMED
+  PENDING
+  REJECTED
+}
+
+enum RelationSource {
+  ADMIN
+  USER_REQUEST
+}
+
+// ─── Person Tree Paths (Closure Table) ───────────────────────────
+model PersonTreePath {
+  ancestorId   String @map("ancestor_id")
+  descendantId String @map("descendant_id")
+  depth        Int
+
+  ancestor   Person @relation("AncestorPaths", fields: [ancestorId], references: [id], onDelete: Cascade)
+  descendant Person @relation("DescendantPaths", fields: [descendantId], references: [id], onDelete: Cascade)
+
+  @@id([ancestorId, descendantId])
+  @@index([descendantId, depth])
+  @@index([ancestorId, depth])
+  @@map("person_tree_paths")
+}
+
+// ─── News ─────────────────────────────────────────────────────────
+model News {
+  id            String    @id @default(uuid())
+  titleAr       String    @map("title_ar")
+  contentAr     String    @map("content_ar")
+  category      String    @default("عام")
+  coverImageUrl String?   @map("cover_image_url")
+  galleryJson   Json?     @map("gallery_json")
+  publishedAt   DateTime  @default(now()) @map("published_at")
+  isPublished   Boolean   @default(true) @map("is_published")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("news")
+}
+
+// ─── Events ───────────────────────────────────────────────────────
+model Event {
+  id            String   @id @default(uuid())
+  titleAr       String   @map("title_ar")
+  descriptionAr String   @map("description_ar")
+  startAt       DateTime @map("start_at")
+  endAt         DateTime @map("end_at")
+  city          String?
+  locationText  String?  @map("location_text")
+  mapUrl        String?  @map("map_url")
+  contactName   String?  @map("contact_name")
+  contactPhone  String?  @map("contact_phone")
+  isPublished   Boolean  @default(true) @map("is_published")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("events")
+}
+
+// ─── Tickets (Suggestions & Complaints) ──────────────────────────
+model Ticket {
+  id            String       @id @default(uuid())
+  type          TicketType
+  title         String
+  message       String
+  attachmentUrl String?      @map("attachment_url")
+  contactPhone  String?      @map("contact_phone")
+  contactEmail  String?      @map("contact_email")
+  status        TicketStatus @default(NEW)
+  adminNote     String?      @map("admin_note")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tickets")
+}
+
+enum TicketType {
+  SUGGESTION
+  COMPLAINT
+}
+
+enum TicketStatus {
+  NEW
+  IN_REVIEW
+  CLOSED
+}
+
+// ─── Admin Users ──────────────────────────────────────────────────
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}

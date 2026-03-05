@@ -1,0 +1,83 @@
+/* Tamim Diwan Admin — Global Styles */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #1B5E20;
+  --primary-light: #2E7D32;
+  --primary-dark: #0A3D0A;
+  --primary-surface: #E8F5E9;
+  --gold: #B8860B;
+  --gold-light: #DAA520;
+  --gold-surface: #FFF8DC;
+  --white: #FFFFFF;
+  --grey-50: #FAFAFA;
+  --grey-100: #F5F5F5;
+  --grey-200: #EEEEEE;
+  --grey-300: #E0E0E0;
+  --grey-600: #757575;
+  --grey-800: #424242;
+  --text-primary: #212121;
+  --text-secondary: #616161;
+  --error: #C62828;
+  --border: #E0E0E0;
+}
+
+html { direction: rtl; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+body { background: var(--grey-50); color: var(--text-primary); min-height: 100vh; }
+a { text-decoration: none; color: inherit; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none; transition: opacity 0.2s, transform 0.1s;
+}
+.btn:hover { opacity: 0.9; }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-danger  { background: var(--error); color: white; }
+.btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
+.btn-gold    { background: var(--gold); color: white; }
+.btn-sm      { padding: 5px 10px; font-size: 12px; }
+
+.card {
+  background: var(--white); border-radius: 12px;
+  padding: 24px; border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+}
+.badge-new      { background: #E3F2FD; color: #1565C0; }
+.badge-in_review { background: #FFF8E1; color: #F57C00; }
+.badge-closed   { background: #F1F8E9; color: #33691E; }
+.badge-published { background: var(--primary-surface); color: var(--primary); }
+.badge-draft    { background: var(--grey-200); color: var(--grey-600); }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th {
+  background: var(--grey-50); padding: 12px 16px; text-align: right;
+  font-weight: 700; color: var(--text-secondary); border-bottom: 2px solid var(--border);
+}
+tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+tbody tr:hover { background: var(--grey-50); }
+
+input, select, textarea {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 14px; direction: rtl; font-family: inherit;
+  outline: none; transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+
+label {
+  display: block; margin-bottom: 6px; font-size: 13px;
+  font-weight: 600; color: var(--text-secondary);
+}
+.form-group { margin-bottom: 16px; }
+.error-msg { font-size: 12px; color: var(--error); margin-top: 4px; }
+
+.pagination { display: flex; gap: 8px; align-items: center; }
+.pagination button { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: white; cursor: pointer; font-size: 13px; }
+.pagination button.active { background: var(--primary); color: white; border-color: var(--primary); }
+.pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
