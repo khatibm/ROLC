@@ -1,0 +1,18 @@
+{
+  "name": "tamim-diwan",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "server",
+    "admin"
+  ],
+  "scripts": {
+    "server": "cd server && npm run start:dev",
+    "admin": "cd admin && npm run dev",
+    "mobile": "cd mobile && npm run start",
+    "install:all": "npm install && cd server && npm install && cd ../admin && npm install && cd ../mobile && npm install",
+    "db:migrate": "cd server && npm run db:migrate",
+    "db:seed": "cd server && npm run db:seed",
+    "test": "cd server && npm run test"
+  }
+}
